@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Box, Container, Typography, Modal } from "@mui/material";
 import ApiKeyInput from "../../components/ApiKeyInput";
 import ChatInput from "../../components/ChatInput";
@@ -41,26 +41,33 @@ const ChatPage: React.FC = () => {
     const newMessages: Message[] = [
       ...messages,
       { sender: "user", content: message },
-      { sender: "ai", content: "Loading...", loading: true },
+      { sender: "ai", content: "", loading: true },
     ];
     setMessages(newMessages);
 
     try {
-      const aiResponse = await sendMessageToAI(apiKey, [
-        ...newMessages
+      await sendMessageToAI(
+        apiKey,
+        newMessages
           .filter((msg) => !msg.loading)
           .map((msg) => ({
             role: msg.sender === "user" ? "user" : "assistant",
             content: msg.content,
           })),
-      ]);
+        (content) => {
+          setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages];
+            const lastMessage = updatedMessages[updatedMessages.length - 1];
+            lastMessage.content += content; // 实时更新消息内容
+            lastMessage.loading = false;
+            return updatedMessages;
+          });
+        }
+      );
+
       setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1), // Remove the loading message
-        {
-          sender: "ai",
-          content: aiResponse.choices[0].message.content,
-          loading: false,
-        },
+        ...prevMessages.slice(0, -1),
+        { ...prevMessages[prevMessages.length - 1], loading: false },
       ]);
     } catch (error) {
       console.log(error, "Error occurred");
