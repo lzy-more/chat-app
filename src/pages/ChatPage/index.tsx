@@ -23,10 +23,10 @@ const style = {
 const ChatPage: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
-  const [apiKey, setApiKey] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>(window.localStorage.getItem("apiKey")||"");
   const [messages, setMessages] = useState<Message[]>([]);
   const handleSendMessage = async (message: string) => {
-    if (!window.localStorage.getItem("apiKey")) {
+    if (!apiKey) {
       setOpen(true);
       return;
     }
