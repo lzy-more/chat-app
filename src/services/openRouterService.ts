@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const OPENROUTER_API_URL = "https://api.openrouter.ai/v1/chat";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export const sendMessageToAI = async (
   apiKey: string,
@@ -13,6 +13,7 @@ export const sendMessageToAI = async (
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        Accept: "text/event-stream",
       },
     }
   );
