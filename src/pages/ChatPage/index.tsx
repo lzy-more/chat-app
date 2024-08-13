@@ -25,7 +25,6 @@ const style = {
 
 const ChatPage: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const handleClose = () => setOpen(false);
 
   const [apiKey, setApiKey] = useState<string>(
@@ -45,7 +44,6 @@ const ChatPage: React.FC = () => {
       { sender: "ai", content: "Loading...", loading: true },
     ];
     setMessages(newMessages);
-    setLoading(true);
 
     try {
       const aiResponse = await sendMessageToAI(apiKey, [
@@ -68,8 +66,6 @@ const ChatPage: React.FC = () => {
       console.log(error, "Error occurred");
       window.localStorage.removeItem("apiKey");
       alert("apiKey is invalid");
-    } finally {
-      setLoading(false);
     }
   };
 
