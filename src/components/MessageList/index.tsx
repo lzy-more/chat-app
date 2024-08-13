@@ -1,9 +1,17 @@
 import React from "react";
-import { List, ListItem, ListItemText, Box, Avatar } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
 
 type Message = {
   sender: "user" | "ai";
   content: string;
+  loading?: boolean;
 };
 
 type MessageListProps = {
@@ -20,19 +28,24 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
             style={{ flexDirection: "column", alignItems: "flex-start" }}
           >
             <Avatar>{message.sender === "user" ? "You" : "Gpt"}</Avatar>
-
-            <ListItemText
-              sx={{
-                backgroundColor:
-                  message.sender === "user" ? "primary.main" : "secondary.main",
-                color: "#fff",
-                borderRadius: 2,
-                padding: 1,
-                width: "75%",
-              }}
-              primary={message.content}
-              style={{ display: "block" }}
-            />
+            <Box sx={{ width: "75%", marginTop: 1 }}>
+              {!message.loading ? (
+                <ListItemText
+                  sx={{
+                    backgroundColor:
+                      message.sender === "user"
+                        ? "primary.main"
+                        : "secondary.main",
+                    color: "#fff",
+                    borderRadius: 2,
+                    padding: 1,
+                  }}
+                  primary={message.content}
+                />
+              ) : (
+                <CircularProgress color="secondary" />
+              )}
+            </Box>
           </ListItem>
         ))}
       </List>
