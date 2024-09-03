@@ -55,6 +55,8 @@ const ChatPage: React.FC = () => {
             content: msg.content,
           })),
         (content) => {
+          console.log(content, "00------");
+
           setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages];
             const lastMessage = updatedMessages[updatedMessages.length - 1];

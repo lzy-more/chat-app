@@ -1,4 +1,5 @@
 import React from "react";
+import MarkdownIt from "markdown-it";
 import {
   List,
   ListItem,
@@ -18,6 +19,9 @@ type MessageListProps = {
   messages: Message[];
 };
 
+// 创建 MarkdownIt 实例
+const md = new MarkdownIt();
+
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   return (
     <Box sx={{ flexGrow: 1, overflow: "auto", marginBottom: 2 }}>
@@ -30,6 +34,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
             <Avatar>{message.sender === "user" ? "You" : "Gpt"}</Avatar>
             <Box sx={{ width: "75%", marginTop: 1 }}>
               {!message.loading ? (
+                // 使用 MarkdownIt 渲染内容
                 <ListItemText
                   sx={{
                     backgroundColor:
@@ -40,7 +45,14 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
                     borderRadius: 2,
                     padding: 1,
                   }}
-                  primary={message.content}
+                  // 使用 dangerouslySetInnerHTML 来显示解析后的 HTML
+                  primary={
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: md.render(message.content),
+                      }}
+                    />
+                  }
                 />
               ) : (
                 <CircularProgress color="secondary" />
