@@ -4,7 +4,9 @@ import ApiKeyInput from "../../components/ApiKeyInput";
 import ChatInput from "../../components/ChatInput";
 import MessageList from "../../components/MessageList";
 import { sendMessageToAI } from "../../services/openRouterService";
-
+import MarkdownIt from "markdown-it";
+// 创建 MarkdownIt 实例
+const md = new MarkdownIt();
 type Message = {
   sender: "user" | "ai";
   content: string;
@@ -55,8 +57,6 @@ const ChatPage: React.FC = () => {
             content: msg.content,
           })),
         (content) => {
-          console.log(content, "00------");
-
           setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages];
             const lastMessage = updatedMessages[updatedMessages.length - 1];
