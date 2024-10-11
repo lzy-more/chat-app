@@ -1,19 +1,20 @@
 // src/App.tsx
 import React from "react";
-// import ChatPage from "./pages/ChatPage";
+import ChatPage from "./pages/ChatPage";
 import Captcha from "./components/Captcha";
 import ImagePreview from "./components/ImagePreview";
 import girl from "./assets/1.jpg";
 const App: React.FC = () => {
   // return <ChatPage />;
   return (
-    <ImagePreview
-      src={
-        "https://sns-webpic-qc.xhscdn.com/202409061415/d74e16a51f9a9fe1db4352acdd920db0/1040g008317ce7dhiju2g5p4opesk8ea1bd7gbp0!nc_n_webp_mw_1"
-      }
-      placeholderSrc={girl}
-      alt="Sample Image"
-    />
+    // <ImagePreview
+    //   src={
+    //     "https://upload-images.jianshu.io/upload_images/5809200-736bc3917fe92142.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
+    //   }
+    //   placeholderSrc={girl}
+    //   alt="Sample Image"
+    // />
+    <ChatPage></ChatPage>
   );
 };
 

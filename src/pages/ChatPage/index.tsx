@@ -3,10 +3,9 @@ import { Box, Container, Typography, Modal } from "@mui/material";
 import ApiKeyInput from "../../components/ApiKeyInput";
 import ChatInput from "../../components/ChatInput";
 import MessageList from "../../components/MessageList";
-import { sendMessageToAI } from "../../services/openRouterService";
-import MarkdownIt from "markdown-it";
-// 创建 MarkdownIt 实例
-const md = new MarkdownIt();
+// import { sendMessageToAI } from "../../services/openRouterService";
+import { createChatEvent } from "../../services/eventSource";
+
 type Message = {
   sender: "user" | "ai";
   content: string;
@@ -46,36 +45,66 @@ const ChatPage: React.FC = () => {
       { sender: "ai", content: "", loading: true },
     ];
     setMessages(newMessages);
+    const params = newMessages
+      .filter((msg) => !msg.loading)
+      .map((msg) => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.content,
+      }));
 
-    try {
-      await sendMessageToAI(
-        apiKey,
-        newMessages
-          .filter((msg) => !msg.loading)
-          .map((msg) => ({
-            role: msg.sender === "user" ? "user" : "assistant",
-            content: msg.content,
-          })),
-        (content) => {
-          setMessages((prevMessages) => {
-            const updatedMessages = [...prevMessages];
-            const lastMessage = updatedMessages[updatedMessages.length - 1];
-            lastMessage.content += content; // 实时更新消息内容
-            lastMessage.loading = false;
-            return updatedMessages;
-          });
-        }
-      );
+    console.log(params, "params");
 
-      setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1),
-        { ...prevMessages[prevMessages.length - 1], loading: false },
-      ]);
-    } catch (error) {
-      console.log(error, "Error occurred");
-      window.localStorage.removeItem("apiKey");
-      alert("apiKey is invalid");
-    }
+    createChatEvent({
+      params: { messages: params, stream: true },
+      onComplete: () => {
+        console.log("onComplete");
+      },
+      onStart: () => {
+        console.log("onStart");
+      },
+      onEvent: (content) => {
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          const lastMessage = updatedMessages[updatedMessages.length - 1];
+          lastMessage.content += content; // 实时更新消息内容
+          lastMessage.loading = false;
+          return updatedMessages;
+        });
+      },
+      onError: (code, message) => {
+        console.log(code, message, "code, message");
+      },
+    });
+
+    //   try {
+    //     await sendMessageToAI(
+    //       apiKey,
+    //       newMessages
+    //         .filter((msg) => !msg.loading)
+    //         .map((msg) => ({
+    //           role: msg.sender === "user" ? "user" : "assistant",
+    //           content: msg.content,
+    //         })),
+    //       (content) => {
+    //         setMessages((prevMessages) => {
+    //           const updatedMessages = [...prevMessages];
+    //           const lastMessage = updatedMessages[updatedMessages.length - 1];
+    //           lastMessage.content += content; // 实时更新消息内容
+    //           lastMessage.loading = false;
+    //           return updatedMessages;
+    //         });
+    //       }
+    //     );
+
+    //     setMessages((prevMessages) => [
+    //       ...prevMessages.slice(0, -1),
+    //       { ...prevMessages[prevMessages.length - 1], loading: false },
+    //     ]);
+    //   } catch (error) {
+    //     console.log(error, "Error occurred");
+    //     window.localStorage.removeItem("apiKey");
+    //     alert("apiKey is invalid");
+    //   }
   };
 
   const saveKey = (apiKey: string) => {
@@ -99,7 +128,7 @@ const ChatPage: React.FC = () => {
         style={{ width: "70%" }}
       >
         <Typography variant="h4" component="h1" gutterBottom>
-          AI Chat
+          AI Chat11111
         </Typography>
         <MessageList messages={messages} />
         <ChatInput onSendMessage={handleSendMessage} />
